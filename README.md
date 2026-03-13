@@ -20,6 +20,7 @@
 
 ## 📢 News
 
+- **2026-03-13** 🚀 Released **v0.1.5** — added support for configurable memory limits, improved error handling, and performance optimizations. Please see [release notes](https://github.com/HKUDS/nanobot/releases/tag/v0.1.5) for details.
 - **2026-03-08** 🚀 Released **v0.1.4.post4** — a reliability-packed release with safer defaults, better multi-instance support, sturdier MCP, and major channel and provider improvements. Please see [release notes](https://github.com/HKUDS/nanobot/releases/tag/v0.1.4.post4) for details.
 - **2026-03-07** 🚀 Azure OpenAI provider, WhatsApp media, QQ group chats, and more Telegram/Feishu polish.
 - **2026-03-06** 🪄 Lighter providers, smarter media handling, and sturdier memory and CLI compatibility.
