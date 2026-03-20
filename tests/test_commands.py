@@ -99,6 +99,23 @@ def test_onboard_existing_workspace_safe_create(mock_paths):
     workspace_dir.mkdir(parents=True)
     config_file.write_text("{}")
 
+
+def test_version_callback():
+    """Test --version flag."""
+    from nanobot.cli.commands import version_callback
+    with pytest.raises(typer.Exit):
+        version_callback(True)
+
+
+def test_is_exit_command():
+    """Test exit command detection."""
+    from nanobot.cli.commands import _is_exit_command
+    assert _is_exit_command("exit") is True
+    assert _is_exit_command("QUIT") is True
+    assert _is_exit_command("/exit") is True
+    assert _is_exit_command("hello") is False
+    assert _is_exit_command("") is False
+
     result = runner.invoke(app, ["onboard"], input="n\n")
 
     assert result.exit_code == 0
