@@ -11,6 +11,9 @@ import makeWASocket, {
   makeCacheableSignalKeyStore,
   downloadMediaMessage,
   extractMessageContent as baileysExtractMessageContent,
+  WASocket,
+  proto,
+  AnyMessageContent,
 } from '@whiskeysockets/baileys';
 
 import { Boom } from '@hapi/boom';
@@ -40,7 +43,7 @@ export interface WhatsAppClientOptions {
 }
 
 export class WhatsAppClient {
-  private sock: any = null;
+  private sock: WASocket | null = null;
   private options: WhatsAppClientOptions;
   private reconnecting = false;
 
@@ -70,14 +73,15 @@ export class WhatsAppClient {
     });
 
     // Handle WebSocket errors
-    if (this.sock.ws && typeof this.sock.ws.on === 'function') {
-      this.sock.ws.on('error', (err: Error) => {
+    const ws = (this.sock as any).ws;
+    if (ws && typeof ws.on === 'function') {
+      ws.on('error', (err: Error) => {
         console.error('WebSocket error:', err.message);
       });
     }
 
     // Handle connection updates
-    this.sock.ev.on('connection.update', async (update: any) => {
+    this.sock.ev.on('connection.update', async (update) => {
       const { connection, lastDisconnect, qr } = update;
 
       if (qr) {
@@ -112,7 +116,7 @@ export class WhatsAppClient {
     this.sock.ev.on('creds.update', saveCreds);
 
     // Handle incoming messages
-    this.sock.ev.on('messages.upsert', async ({ messages, type }: { messages: any[]; type: string }) => {
+    this.sock.ev.on('messages.upsert', async ({ messages, type }) => {
       if (type !== 'notify') return;
 
       for (const msg of messages) {
@@ -159,7 +163,7 @@ export class WhatsAppClient {
     });
   }
 
-  private async downloadMedia(msg: any, mimetype?: string, fileName?: string): Promise<string | null> {
+  private async downloadMedia(msg: proto.IWebMessageInfo, mimetype?: string, fileName?: string): Promise<string | null> {
     try {
       const mediaDir = join(this.options.authDir, '..', 'media');
       await mkdir(mediaDir, { recursive: true });
@@ -188,7 +192,7 @@ export class WhatsAppClient {
     }
   }
 
-  private getTextContent(message: any): string | null {
+  private getTextContent(message: proto.IMessage): string | null {
     // Text message
     if (message.conversation) {
       return message.conversation;
@@ -227,7 +231,7 @@ export class WhatsAppClient {
       throw new Error('Not connected');
     }
 
-    await this.sock.sendMessage(to, { text });
+    await this.sock.sendMessage(to, { text } as AnyMessageContent);
   }
 
   async disconnect(): Promise<void> {
