@@ -445,7 +445,16 @@ nanobot gateway
 
 Requires **Node.js ≥18**.
 
-**1. Link device**
+**1. Development Setup** (if running from source)
+
+```bash
+cd bridge
+npm install
+npm run build
+npm start
+```
+
+**2. Link device**
 
 ```bash
 nanobot channels login
